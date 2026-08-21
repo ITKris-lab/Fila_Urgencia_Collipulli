@@ -1,0 +1,10 @@
+{
+  "appId": "cl.salud.urgenciacollipulli",
+  "appName": "Fila Urgencia Collipulli",
+  "webDir": "out",
+  "server": {
+    "androidScheme": "https",
+    "url": "http://10.68.118.135:3000",
+    "cleartext": true
+  }
+}
