@@ -19,7 +19,7 @@ export async function GET() {
         'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      timeout: 15000
+      timeout: 8000 // Bajamos a 8 seg para que Vercel no mate el proceso antes
     });
 
     const $ = cheerio.load(data);
