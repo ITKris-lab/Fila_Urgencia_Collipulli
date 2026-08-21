@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import axios from 'axios';
 import * as cheerio from 'cheerio';
 
 export const dynamic = 'force-dynamic';
@@ -8,25 +7,31 @@ export async function GET() {
   try {
     const url = 'https://www.esissan.cl/ssan_pth_mapa_redurgencia/sele_ciu_grafico';
 
-    // Configuración del body form-urlencoded según requerimiento
     const params = new URLSearchParams();
     params.append('NOM', 'UEH COLLIPULLI');
     params.append('estab', '103');
 
-    const { data } = await axios.post(url, params.toString(), {
+    // Usamos fetch nativo para mejor compatibilidad con regiones de Vercel
+    const response = await fetch(url, {
+      method: 'POST',
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
         'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      timeout: 8000 // Bajamos a 8 seg para que Vercel no mate el proceso antes
+      body: params.toString(),
+      next: { revalidate: 0 }
     });
 
-    const $ = cheerio.load(data);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-    // 1. Extraer contadores generales (En espera, En atención, Total)
+    const htmlContent = await response.text();
+    const $ = cheerio.load(htmlContent);
+
+    // 1. Extraer contadores generales
     const extractValueNextToText = (textQuery: string) => {
-      // Buscamos el td que contiene el texto y obtenemos el siguiente td
       const element = $(`td:contains("${textQuery}")`).next('td');
       const val = parseInt(element.text().trim());
       return isNaN(val) ? 0 : val;
@@ -36,7 +41,7 @@ export async function GET() {
     const enAtencion = extractValueNextToText('N° de pacientes en atención');
     const totalPacientes = extractValueNextToText('Total de pacientes');
 
-    // 2. Extraer cantidades de categorías (C1-C5, ADMISION) desde el script Chart.js
+    // 2. Extraer cantidades de categorías
     const quantities: Record<string, number> = {
       "C1": 0, "C2": 0, "C3": 0, "C4": 0, "C5": 0, "ADMISION": 0
     };
@@ -64,14 +69,13 @@ export async function GET() {
       }
     });
 
-    // 3. Extraer tiempos promedio desde la tabla "TIEMPO PROMEDIO"
+    // 3. Extraer tiempos promedio
     const times: Record<string, string> = {
       "C1": "0 min", "C2": "0 min", "C3": "0 min", "C4": "0 min", "C5": "0 min", "ADMISION": "0 min"
     };
 
     $('table').each((_, table) => {
-      const tableText = $(table).text();
-      if (tableText.includes('TIEMPO PROMEDIO')) {
+      if ($(table).text().includes('TIEMPO PROMEDIO')) {
         $(table).find('tr').each((_, row) => {
           const cells = $(row).find('td');
           if (cells.length >= 2) {
@@ -89,7 +93,6 @@ export async function GET() {
       }
     });
 
-    // Estructura de respuesta compatible con app/page.tsx
     const collipulliData = {
       hospital: "Hospital de Collipulli",
       totalPacientes,
@@ -105,25 +108,18 @@ export async function GET() {
       },
       ultimaActualizacion: new Date().toLocaleString('es-CL', {
         timeZone: 'America/Santiago',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
       })
     };
 
-    return NextResponse.json(collipulliData, {
-      headers: {
-        'Cache-Control': 'no-store, max-age=0'
-      }
-    });
+    return NextResponse.json(collipulliData);
 
   } catch (error: any) {
     console.error('Error fetching real-time data:', error.message);
     return NextResponse.json({
-      error: 'Error al consultar la fuente de datos real',
-      message: error.message
+      error: 'Error al consultar datos',
+      detail: error.message
     }, { status: 500 });
   }
 }
