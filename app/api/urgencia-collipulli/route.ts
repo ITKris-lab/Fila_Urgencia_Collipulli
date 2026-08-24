@@ -3,42 +3,30 @@ import * as cheerio from 'cheerio';
 
 export const dynamic = 'force-dynamic';
 
+// URL del puente Cloudflare recién creado
+const CLOUDFLARE_WORKER_URL = 'https://recolector-urgencia.tic-kym24.workers.dev/';
+
 export async function GET() {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8000); // Timeout de 8 seg
-
   try {
-    const url = 'https://www.esissan.cl/ssan_pth_mapa_redurgencia/sele_ciu_grafico';
-
-    const params = new URLSearchParams();
-    params.append('NOM', 'UEH COLLIPULLI');
-    params.append('estab', '103');
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Referer': 'https://www.esissan.cl/ssan_pth_mapa_redurgencia',
-        'Origin': 'https://www.esissan.cl',
-        'Accept': '*/*',
-      },
-      body: params.toString(),
-      signal: controller.signal,
-      cache: 'no-store'
+    // Ahora le pedimos los datos a nuestro "puente" en Cloudflare
+    // El Worker ya hace el POST y tiene los headers necesarios para saltar el bloqueo
+    const response = await fetch(CLOUDFLARE_WORKER_URL, {
+      method: 'GET',
+      cache: 'no-store',
+      next: { revalidate: 0 }
     });
 
-    clearTimeout(timeoutId);
-
     if (!response.ok) {
-        return NextResponse.json({
-            error: 'Servidor SSAN no responde',
-            status: response.status
-        }, { status: 200 }); // Retornamos 200 para que la app no explote, pero con el error
+        throw new Error(`Error en el puente Cloudflare: ${response.status}`);
     }
 
     const htmlContent = await response.text();
+
+    // Verificamos si lo que devolvió el Worker parece HTML válido o un error de bloqueo
+    if (htmlContent.includes('error') && htmlContent.length < 200) {
+        throw new Error('El servidor de salud bloqueó incluso a Cloudflare');
+    }
+
     const $ = cheerio.load(htmlContent);
 
     // 1. Extraer contadores generales
@@ -120,11 +108,10 @@ export async function GET() {
     });
 
   } catch (error: any) {
-    clearTimeout(timeoutId);
-    console.error('Error fetching data:', error.name === 'AbortError' ? 'Timeout' : error.message);
+    console.error('Error in route:', error.message);
     return NextResponse.json({
-      error: 'Servicio temporalmente no disponible',
-      detail: error.name === 'AbortError' ? 'Timeout en conexión con SSAN' : error.message
-    }, { status: 200 }); // Retornamos 200 para evitar que la UI se rompa
+      error: 'Error al obtener datos en tiempo real',
+      message: error.message
+    }, { status: 200 });
   }
 }
