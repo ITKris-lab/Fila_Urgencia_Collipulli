@@ -102,7 +102,7 @@ export default function Dashboard() {
         <div className="mt-8 flex justify-between items-center text-sm font-medium relative z-10">
           <div className="flex items-center gap-2">
             <Phone className="w-4 h-4" />
-            <span>Contacto Directo</span>
+            <a href="tel:452552350" className="hover:underline">45-2552350</a>
           </div>
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
@@ -130,43 +130,62 @@ export default function Dashboard() {
       </h3>
 
       {/* Categories Grid */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 mb-8">
         <CategoryCard
           label="C1"
+          desc="Crítico"
           value={data?.categorias?.C1?.cantidad || 0}
           time={data?.categorias?.C1?.tiempoPromedio || "0 min"}
-          color="bg-red-800"
-        />
-        <CategoryCard
-          label="C2"
-          value={data?.categorias?.C2?.cantidad || 0}
-          time={data?.categorias?.C2?.tiempoPromedio || "0 min"}
           color="bg-red-600"
         />
         <CategoryCard
+          label="C2"
+          desc="Grave"
+          value={data?.categorias?.C2?.cantidad || 0}
+          time={data?.categorias?.C2?.tiempoPromedio || "0 min"}
+          color="bg-orange-600"
+        />
+        <CategoryCard
           label="C3"
+          desc="Medio"
           value={data?.categorias?.C3?.cantidad || 0}
           time={data?.categorias?.C3?.tiempoPromedio || "0 min"}
-          color="bg-amber-600"
+          color="bg-amber-500"
         />
         <CategoryCard
           label="C4"
+          desc="No Urgente"
           value={data?.categorias?.C4?.cantidad || 0}
           time={data?.categorias?.C4?.tiempoPromedio || "0 min"}
           color="bg-blue-600"
         />
         <CategoryCard
           label="C5"
+          desc="General"
           value={data?.categorias?.C5?.cantidad || 0}
           time={data?.categorias?.C5?.tiempoPromedio || "0 min"}
           color="bg-emerald-600"
         />
         <CategoryCard
           label="AD"
+          desc="Admisión"
           value={data?.categorias?.AD?.cantidad || 0}
           time={data?.categorias?.AD?.tiempoPromedio || "0 min"}
           color="bg-purple-600"
         />
+      </div>
+
+      {/* Legend Block */}
+      <div className="bg-[#2d3748]/50 rounded-2xl p-4 border border-gray-700/50 mb-6">
+        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Leyenda de Categorías</h4>
+        <div className="grid grid-cols-2 gap-y-2">
+          <LegendItem color="bg-red-600" label="C1" text="Crítico" />
+          <LegendItem color="bg-orange-600" label="C2" text="Grave" />
+          <LegendItem color="bg-amber-500" label="C3" text="Medio" />
+          <LegendItem color="bg-blue-600" label="C4" text="No Urgente" />
+          <LegendItem color="bg-emerald-600" label="C5" text="General" />
+          <LegendItem color="bg-purple-600" label="AD" text="Admisión" />
+        </div>
       </div>
 
       {/* Footer */}
@@ -178,16 +197,30 @@ export default function Dashboard() {
   );
 }
 
-function CategoryCard({ label, value, time, color }: { label: string, value: number, time: string, color: string }) {
+function CategoryCard({ label, desc, value, time, color }: { label: string, desc: string, value: number, time: string, color: string }) {
   return (
-    <div className={`${color} rounded-2xl p-4 flex flex-col justify-between min-h-[100px] shadow-lg`}>
+    <div className={`${color} rounded-2xl p-4 flex flex-col justify-between min-h-[110px] shadow-lg transition-transform active:scale-95`}>
       <div className="flex justify-between items-start">
-        <span className="font-bold text-lg">{label}</span>
+        <div>
+          <span className="font-bold text-lg block leading-none">{label}</span>
+          <span className="text-[10px] opacity-80 font-medium">{desc}</span>
+        </div>
         <span className="text-3xl font-black">{value}</span>
       </div>
-      <div className="bg-black/20 w-fit px-2 py-0.5 rounded text-[10px] font-bold">
+      <div className="bg-black/20 w-fit px-2 py-0.5 rounded text-[10px] font-bold mt-2">
         {time}
       </div>
+    </div>
+  );
+}
+
+function LegendItem({ color, label, text }: { color: string, label: string, text: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`${color} w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold shadow-sm`}>
+        {label}
+      </div>
+      <span className="text-xs text-gray-300">{text}</span>
     </div>
   );
 }
