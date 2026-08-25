@@ -7,7 +7,7 @@ const CLOUDFLARE_WORKER_URL = 'https://recolector-urgencia.tic-kym24.workers.dev
 
 export async function GET() {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 9000); // 9 segundos de gracia
+  const timeoutId = setTimeout(() => controller.abort(), 12000); // Subimos a 12 seg
 
   try {
     const response = await fetch(CLOUDFLARE_WORKER_URL, {
