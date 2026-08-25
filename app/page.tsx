@@ -54,57 +54,55 @@ export default function Dashboard() {
 
   if (loading && !data) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#1a202c]">
-        <RefreshCw className="w-8 h-8 text-white animate-spin" />
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#1a202c] text-white p-4 max-w-md mx-auto font-sans">
+    <main className="min-h-screen bg-slate-50 text-slate-900 p-4 max-w-md mx-auto font-sans">
       {/* Header */}
       <header className="flex items-center justify-between mb-6">
-        <ChevronLeft className="w-6 h-6" />
-        <h1 className="text-xl font-bold">Fila en Urgencia</h1>
-        <button onClick={fetchData} disabled={loading}>
+        <ChevronLeft className="w-6 h-6 text-slate-600" />
+        <h1 className="text-xl font-bold text-slate-800">Fila en Urgencia</h1>
+        <button onClick={fetchData} disabled={loading} className="text-slate-600 hover:text-blue-600">
           <RefreshCw className={`w-6 h-6 ${loading ? 'animate-spin' : ''}`} />
         </button>
       </header>
 
       {/* Badge */}
       <div className="flex justify-center mb-6">
-        <div className="bg-[#2d3748] px-4 py-1.5 rounded-full flex items-center gap-2 border border-gray-700">
-          <div className="bg-emerald-500/20 p-1 rounded">
-             <Plus className="w-3 h-3 text-emerald-400" />
+        <div className="bg-white px-4 py-1.5 rounded-full flex items-center gap-2 border border-slate-200 shadow-sm">
+          <div className="bg-emerald-100 p-1 rounded">
+             <Plus className="w-3 h-3 text-emerald-600" />
           </div>
-          <span className="text-sm font-medium">Red de Urgencias - Collipulli</span>
+          <span className="text-sm font-semibold text-slate-600">Red de Urgencias - Collipulli</span>
         </div>
       </div>
 
       {/* Hospital Info Card */}
-      <div className="bg-red-600 rounded-3xl p-6 mb-6 relative overflow-hidden shadow-xl">
+      <div className="bg-red-600 rounded-3xl p-6 mb-6 relative overflow-hidden shadow-xl shadow-red-200">
         <div className="flex justify-between items-start relative z-10">
           <div className="flex gap-4">
-            <div className="bg-white/20 p-3 rounded-2xl">
-              <Plus className="w-8 h-8 text-white" />
+            <div className="bg-white p-3 rounded-full flex items-center justify-center w-14 h-14 shadow-inner">
+               <div className="border-2 border-red-600 p-0.5 rounded-sm">
+                  <Plus className="w-6 h-6 text-red-600" strokeWidth={3} />
+               </div>
             </div>
             <div>
-              <h2 className="text-2xl font-bold leading-tight">Hospital de Collipulli</h2>
-              <p className="text-white/80 text-sm">Unidad de Emergencia Hospitalaria</p>
+              <h2 className="text-2xl font-bold leading-tight text-white">Hospital de Collipulli</h2>
+              <p className="text-white/90 text-sm font-medium">Unidad de Emergencia Hospitalaria</p>
             </div>
           </div>
-          <div className="bg-white rounded-2xl p-3 text-center min-w-[70px]">
-            <span className="block text-3xl font-black text-slate-800">{data?.totalPacientes || 0}</span>
+          <div className="bg-white rounded-2xl p-3 text-center min-w-[70px] shadow-lg">
+            <span className="block text-3xl font-black text-slate-800 leading-none">{data?.totalPacientes || 0}</span>
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Total</span>
           </div>
         </div>
 
-        <div className="mt-8 flex justify-between items-center text-sm font-medium relative z-10">
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4" />
-            <a href="tel:452552350" className="hover:underline">45-2552350</a>
-          </div>
-          <div className="flex items-center gap-2">
+        <div className="mt-8 flex justify-center items-center text-sm font-bold relative z-10">
+          <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full text-white">
             <Clock className="w-4 h-4" />
             <span>Atención 24 horas</span>
           </div>
@@ -113,19 +111,19 @@ export default function Dashboard() {
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-2 gap-4 mb-8">
-        <div className="bg-[#2d3748] rounded-3xl p-6 text-center shadow-lg border border-gray-700/50">
-          <Clock className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-          <span className="block text-4xl font-bold mb-1">{data?.enEspera || 0}</span>
-          <span className="text-gray-400 text-sm font-medium">En espera</span>
+        <div className="bg-white rounded-3xl p-6 text-center shadow-md border border-slate-100">
+          <Clock className="w-6 h-6 text-amber-500 mx-auto mb-2" />
+          <span className="block text-4xl font-bold mb-1 text-slate-800">{data?.enEspera || 0}</span>
+          <span className="text-slate-500 text-sm font-bold">En espera</span>
         </div>
-        <div className="bg-[#2d3748] rounded-3xl p-6 text-center shadow-lg border border-gray-700/50">
-          <Users className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
-          <span className="block text-4xl font-bold mb-1">{data?.enAtencion || 0}</span>
-          <span className="text-gray-400 text-sm font-medium">En atención</span>
+        <div className="bg-white rounded-3xl p-6 text-center shadow-md border border-slate-100">
+          <Users className="w-6 h-6 text-emerald-500 mx-auto mb-2" />
+          <span className="block text-4xl font-bold mb-1 text-slate-800">{data?.enAtencion || 0}</span>
+          <span className="text-slate-500 text-sm font-bold">En atención</span>
         </div>
       </div>
 
-      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 ml-1">
+      <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-1">
         Pacientes por categoría (Tiempo Promedio)
       </h3>
 
@@ -176,8 +174,8 @@ export default function Dashboard() {
       </div>
 
       {/* Legend Block */}
-      <div className="bg-[#2d3748]/50 rounded-2xl p-4 border border-gray-700/50 mb-6">
-        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Leyenda de Categorías</h4>
+      <div className="bg-white rounded-2xl p-4 border border-slate-200 mb-6 shadow-sm">
+        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Leyenda de Categorías</h4>
         <div className="grid grid-cols-2 gap-y-2">
           <LegendItem color="bg-red-600" label="C1" text="Crítico" />
           <LegendItem color="bg-orange-600" label="C2" text="Grave" />
@@ -189,7 +187,7 @@ export default function Dashboard() {
       </div>
 
       {/* Footer */}
-      <footer className="mt-8 text-center text-gray-500 text-[10px] flex items-center justify-center gap-2">
+      <footer className="mt-8 text-center text-slate-400 text-[10px] flex items-center justify-center gap-2 pb-8">
         <RefreshCw className="w-3 h-3" />
         <span>Actualizado: {data?.ultimaActualizacion || '---'}</span>
       </footer>
@@ -217,10 +215,10 @@ function CategoryCard({ label, desc, value, time, color }: { label: string, desc
 function LegendItem({ color, label, text }: { color: string, label: string, text: string }) {
   return (
     <div className="flex items-center gap-2">
-      <div className={`${color} w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold shadow-sm`}>
+      <div className={`${color} w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold text-white shadow-sm`}>
         {label}
       </div>
-      <span className="text-xs text-gray-300">{text}</span>
+      <span className="text-xs font-bold text-slate-600">{text}</span>
     </div>
   );
 }
