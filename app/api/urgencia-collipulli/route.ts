@@ -3,47 +3,54 @@ import * as cheerio from 'cheerio';
 
 export const dynamic = 'force-dynamic';
 
-// URL del puente Cloudflare recién creado
 const CLOUDFLARE_WORKER_URL = 'https://recolector-urgencia.tic-kym24.workers.dev/';
 
 export async function GET() {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 9000); // 9 segundos de gracia
+
   try {
-    // Ahora le pedimos los datos a nuestro "puente" en Cloudflare
-    // El Worker ya hace el POST y tiene los headers necesarios para saltar el bloqueo
     const response = await fetch(CLOUDFLARE_WORKER_URL, {
       method: 'GET',
-      cache: 'no-store',
-      next: { revalidate: 0 }
+      headers: { 'Cache-Control': 'no-cache' },
+      signal: controller.signal,
+      cache: 'no-store'
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-        throw new Error(`Error en el puente Cloudflare: ${response.status}`);
+        throw new Error(`Cloudflare devolvió status ${response.status}`);
     }
 
     const htmlContent = await response.text();
 
-    // Verificamos si lo que devolvió el Worker parece HTML válido o un error de bloqueo
-    if (htmlContent.includes('error') && htmlContent.length < 200) {
-        throw new Error('El servidor de salud bloqueó incluso a Cloudflare');
+    // Si el contenido es muy corto, probablemente es un error del servidor de salud
+    if (htmlContent.length < 500) {
+        if (htmlContent.includes('error') || htmlContent.includes('blocked')) {
+             throw new Error('El servidor de salud bloqueó la petición (Incluso vía Cloudflare)');
+        }
+        throw new Error('Respuesta del servidor de salud incompleta o vacía');
     }
 
     const $ = cheerio.load(htmlContent);
 
-    // 1. Extraer contadores generales
+    // Verificamos si existe la tabla de datos antes de procesar
+    if (!$('td:contains("Pacientes")').length) {
+        throw new Error('No se encontró la tabla de pacientes en el HTML recibido');
+    }
+
     const extractValueNextToText = (textQuery: string) => {
       const element = $(`td:contains("${textQuery}")`).next('td');
-      const val = parseInt(element.text().trim());
+      const val = parseInt(element.text().replace(/[^0-9]/g, ''));
       return isNaN(val) ? 0 : val;
     };
 
-    const enEspera = extractValueNextToText('N° de Pacientes en espera de atención');
-    const enAtencion = extractValueNextToText('N° de pacientes en atención');
+    const enEspera = extractValueNextToText('espera de atención');
+    const enAtencion = extractValueNextToText('pacientes en atención');
     const totalPacientes = extractValueNextToText('Total de pacientes');
 
-    // 2. Extraer cantidades de categorías
-    const quantities: Record<string, number> = {
-      "C1": 0, "C2": 0, "C3": 0, "C4": 0, "C5": 0, "ADMISION": 0
-    };
+    const quantities: Record<string, number> = { "C1": 0, "C2": 0, "C3": 0, "C4": 0, "C5": 0, "ADMISION": 0 };
 
     $('script').each((_, script) => {
       const content = $(script).html() || '';
@@ -66,10 +73,7 @@ export async function GET() {
       }
     });
 
-    // 3. Extraer tiempos promedio
-    const times: Record<string, string> = {
-      "C1": "0 min", "C2": "0 min", "C3": "0 min", "C4": "0 min", "C5": "0 min", "ADMISION": "0 min"
-    };
+    const times: Record<string, string> = { "C1": "0 min", "C2": "0 min", "C3": "0 min", "C4": "0 min", "C5": "0 min", "ADMISION": "0 min" };
 
     $('table').each((_, table) => {
       if ($(table).text().includes('TIEMPO PROMEDIO')) {
@@ -108,10 +112,10 @@ export async function GET() {
     });
 
   } catch (error: any) {
-    console.error('Error in route:', error.message);
+    clearTimeout(timeoutId);
     return NextResponse.json({
-      error: 'Error al obtener datos en tiempo real',
-      message: error.message
+      error: 'Error de conexión con el Hospital',
+      detail: error.name === 'AbortError' ? 'Tiempo de espera agotado' : error.message
     }, { status: 200 });
   }
 }
