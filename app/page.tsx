@@ -30,9 +30,16 @@ export default function Dashboard() {
       const response = await fetch('/api/urgencia-collipulli');
       if (!response.ok) throw new Error('Error al cargar datos');
       const result = await response.json();
+
+      // Si el API devolvió un objeto de error en lugar de los datos
+      if (result.error) {
+        throw new Error(result.detail || result.error);
+      }
+
       setData(result);
       setError(null);
     } catch (err: any) {
+      console.error("Fetch error:", err.message);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -126,38 +133,38 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 gap-4">
         <CategoryCard
           label="C1"
-          value={data?.categorias.C1.cantidad || 0}
-          time={data?.categorias.C1.tiempoPromedio || "0 min"}
+          value={data?.categorias?.C1?.cantidad || 0}
+          time={data?.categorias?.C1?.tiempoPromedio || "0 min"}
           color="bg-red-800"
         />
         <CategoryCard
           label="C2"
-          value={data?.categorias.C2.cantidad || 0}
-          time={data?.categorias.C2.tiempoPromedio || "0 min"}
+          value={data?.categorias?.C2?.cantidad || 0}
+          time={data?.categorias?.C2?.tiempoPromedio || "0 min"}
           color="bg-red-600"
         />
         <CategoryCard
           label="C3"
-          value={data?.categorias.C3.cantidad || 0}
-          time={data?.categorias.C3.tiempoPromedio || "0 min"}
+          value={data?.categorias?.C3?.cantidad || 0}
+          time={data?.categorias?.C3?.tiempoPromedio || "0 min"}
           color="bg-amber-600"
         />
         <CategoryCard
           label="C4"
-          value={data?.categorias.C4.cantidad || 0}
-          time={data?.categorias.C4.tiempoPromedio || "0 min"}
+          value={data?.categorias?.C4?.cantidad || 0}
+          time={data?.categorias?.C4?.tiempoPromedio || "0 min"}
           color="bg-blue-600"
         />
         <CategoryCard
           label="C5"
-          value={data?.categorias.C5.cantidad || 0}
-          time={data?.categorias.C5.tiempoPromedio || "0 min"}
+          value={data?.categorias?.C5?.cantidad || 0}
+          time={data?.categorias?.C5?.tiempoPromedio || "0 min"}
           color="bg-emerald-600"
         />
         <CategoryCard
           label="AD"
-          value={data?.categorias.AD.cantidad || 0}
-          time={data?.categorias.AD.tiempoPromedio || "0 min"}
+          value={data?.categorias?.AD?.cantidad || 0}
+          time={data?.categorias?.AD?.tiempoPromedio || "0 min"}
           color="bg-purple-600"
         />
       </div>
