@@ -1,44 +1,37 @@
 import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 
+// Forzamos el uso de Edge Runtime para que sea ultra rápido en Cloudflare
+export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
-const CLOUDFLARE_WORKER_URL = 'https://recolector-urgencia.tic-kym24.workers.dev/';
-
 export async function GET() {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 12000); // Subimos a 12 seg
+  const url = 'https://www.esissan.cl/ssan_pth_mapa_redurgencia/sele_ciu_grafico';
 
   try {
-    const response = await fetch(CLOUDFLARE_WORKER_URL, {
-      method: 'GET',
-      headers: { 'Cache-Control': 'no-cache' },
-      signal: controller.signal,
+    const params = new URLSearchParams();
+    params.append('NOM', 'UEH COLLIPULLI');
+    params.append('estab', '103');
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Referer': 'https://www.esissan.cl/ssan_pth_mapa_redurgencia'
+      },
+      body: params.toString(),
       cache: 'no-store'
     });
 
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-        throw new Error(`Cloudflare devolvió status ${response.status}`);
-    }
+    if (!response.ok) throw new Error('SSAN no responde');
 
     const htmlContent = await response.text();
-
-    // Si el contenido es muy corto, probablemente es un error del servidor de salud
-    if (htmlContent.length < 500) {
-        if (htmlContent.includes('error') || htmlContent.includes('blocked')) {
-             throw new Error('El servidor de salud bloqueó la petición (Incluso vía Cloudflare)');
-        }
-        throw new Error('Respuesta del servidor de salud incompleta o vacía');
-    }
-
     const $ = cheerio.load(htmlContent);
 
-    // Verificamos si existe la tabla de datos antes de procesar
-    if (!$('td:contains("Pacientes")').length) {
-        throw new Error('No se encontró la tabla de pacientes en el HTML recibido');
-    }
+    // Verificación básica de contenido
+    if (!htmlContent.includes('Pacientes')) throw new Error('Contenido inválido');
 
     const extractValueNextToText = (textQuery: string) => {
       const element = $(`td:contains("${textQuery}")`).next('td');
@@ -112,10 +105,6 @@ export async function GET() {
     });
 
   } catch (error: any) {
-    clearTimeout(timeoutId);
-    return NextResponse.json({
-      error: 'Error de conexión con el Hospital',
-      detail: error.name === 'AbortError' ? 'Tiempo de espera agotado' : error.message
-    }, { status: 200 });
+    return NextResponse.json({ error: 'Falla de conexión', detail: error.message }, { status: 200 });
   }
 }

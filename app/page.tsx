@@ -82,13 +82,15 @@ export default function Dashboard() {
       </div>
 
       {/* Hospital Info Card */}
-      <div className="bg-red-600 rounded-3xl p-6 mb-6 relative overflow-hidden shadow-xl shadow-red-200">
+      <div className="bg-red-600 rounded-3xl p-6 mb-6 relative overflow-hidden shadow-xl shadow-red-100">
         <div className="flex justify-between items-start relative z-10">
           <div className="flex gap-4">
-            <div className="bg-white p-3 rounded-full flex items-center justify-center w-14 h-14 shadow-inner">
-               <div className="border-2 border-red-600 p-0.5 rounded-sm">
-                  <Plus className="w-6 h-6 text-red-600" strokeWidth={3} />
-               </div>
+            <div className="bg-red-700/10 p-1 rounded-full">
+              <div className="bg-white p-3 rounded-full flex items-center justify-center w-14 h-14 shadow-lg border-4 border-red-500">
+                 <div className="bg-white border-2 border-red-600 p-0.5 rounded-sm flex items-center justify-center w-8 h-8">
+                    <Plus className="w-6 h-6 text-red-600" strokeWidth={4} />
+                 </div>
+              </div>
             </div>
             <div>
               <h2 className="text-2xl font-bold leading-tight text-white">Hospital de Collipulli</h2>
@@ -102,8 +104,8 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-8 flex justify-center items-center text-sm font-bold relative z-10">
-          <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full text-white">
-            <Clock className="w-4 h-4" />
+          <div className="flex items-center gap-2 bg-white/20 px-6 py-2 rounded-full text-white border border-white/30 backdrop-blur-sm">
+            <Clock className="w-4 h-4 text-white" />
             <span>Atención 24 horas</span>
           </div>
         </div>
