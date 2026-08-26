@@ -7,10 +7,10 @@ Sistema de monitoreo en tiempo real de la demanda asistencial en la Unidad de Em
 - **Datos en Tiempo Real:** Conexión automatizada con el servidor de salud (SSAN) mediante un "Puente de Datos" seguro.
 - **Visualización de Carga:** Resumen de pacientes en espera, en atención y total acumulado.
 - **Categorización ESI:** Desglose detallado por niveles de urgencia:
-  - **C1 (Rojo):** Crítico
-  - **C2 (Naranja):** Grave
+  - **C1 (Rojo):** Crítico.
+  - **C2 (Naranja):** Grave.
   - **C3 (Amarillo):** Complejidad Media
-  - **C4 (Azul):** No Urgente
+  - **C4 (Azul):** No Urgente.
   - **C5 (Verde):** Consulta General
 - **Tiempos de Espera:** Tiempos promedio calculados en las últimas 12 horas.
 - **Multiplataforma:** Desplegado en la web (Vercel) y disponible como aplicación nativa para Android.
