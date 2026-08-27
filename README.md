@@ -18,7 +18,7 @@ Sistema de monitoreo en tiempo real de la demanda asistencial en la Unidad de Em
 ## 🛠️ Arquitectura Técnica
 
 Para superar los bloqueos de firewall regionales, el proyecto utiliza una arquitectura de tres capas:
-1. **Frontend (Vercel):** Interfaz de usuario construida con Next.js y Tailwind CSS.
+1. **Frontend (ClaudeFlare Pages):** Interfaz de usuario construida con Next.js y Tailwind CSS.
 2. **Puente (Cloudflare Workers):** Actúa como un proxy inteligente que realiza el "trabajo sucio" de consultar al servidor de salud evitando bloqueos de IP.
 3. **App Móvil:** Empaquetado mediante Capacitor para una experiencia nativa en dispositivos Android.
 
