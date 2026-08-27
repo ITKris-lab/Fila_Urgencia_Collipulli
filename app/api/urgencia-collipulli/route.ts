@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 
-// Forzamos el uso de Edge Runtime para que sea ultra rápido en Cloudflare
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
@@ -21,21 +20,24 @@ export async function GET() {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Referer': 'https://www.esissan.cl/ssan_pth_mapa_redurgencia'
       },
-      body: params.toString(),
-      cache: 'no-store'
+      body: params.toString()
     });
 
-    if (!response.ok) throw new Error('SSAN no responde');
+    if (!response.ok) throw new Error(`SSAN responded with status: ${response.status}`);
 
     const htmlContent = await response.text();
-    const $ = cheerio.load(htmlContent);
 
-    // Verificación básica de contenido
-    if (!htmlContent.includes('Pacientes')) throw new Error('Contenido inválido');
+    // Verificación de contenido mínima para evitar errores de parseo
+    if (!htmlContent || htmlContent.length < 100) {
+      throw new Error('Respuesta de SSAN vacía o demasiado corta');
+    }
+
+    const $ = cheerio.load(htmlContent);
 
     const extractValueNextToText = (textQuery: string) => {
       const element = $(`td:contains("${textQuery}")`).next('td');
-      const val = parseInt(element.text().replace(/[^0-9]/g, ''));
+      const text = element.text().trim();
+      const val = parseInt(text.replace(/[^0-9]/g, ''));
       return isNaN(val) ? 0 : val;
     };
 
@@ -86,9 +88,15 @@ export async function GET() {
       }
     });
 
+    // Simplificamos el formato de fecha para evitar errores de ICU/Locale en el Edge de Cloudflare
+    const now = new Date();
+    const timestamp = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+
     return NextResponse.json({
       hospital: "Hospital de Collipulli",
-      totalPacientes, enEspera, enAtencion,
+      totalPacientes,
+      enEspera,
+      enAtencion,
       categorias: {
         C1: { cantidad: quantities["C1"], tiempoPromedio: times["C1"] },
         C2: { cantidad: quantities["C2"], tiempoPromedio: times["C2"] },
@@ -97,14 +105,15 @@ export async function GET() {
         C5: { cantidad: quantities["C5"], tiempoPromedio: times["C5"] },
         AD: { cantidad: quantities["ADMISION"], tiempoPromedio: times["ADMISION"] }
       },
-      ultimaActualizacion: new Date().toLocaleString('es-CL', {
-        timeZone: 'America/Santiago',
-        day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-      })
+      ultimaActualizacion: timestamp
     });
 
   } catch (error: any) {
-    return NextResponse.json({ error: 'Falla de conexión', detail: error.message }, { status: 200 });
+    console.error("API Route Error:", error.message);
+    // Devolvemos el error en el JSON para que el frontend pueda mostrarlo
+    return NextResponse.json({
+      error: 'Error interno en el servidor',
+      message: error.message
+    }, { status: 500 });
   }
 }
