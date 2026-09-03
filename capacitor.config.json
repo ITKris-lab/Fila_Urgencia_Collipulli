@@ -4,7 +4,7 @@
   "webDir": "out",
   "server": {
     "androidScheme": "https",
-    "url": "http://10.68.118.135:3000",
+    "url": "https://fila-urgencia-collipulli.pages.dev",
     "cleartext": true
   }
 }

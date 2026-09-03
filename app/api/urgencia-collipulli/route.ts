@@ -27,7 +27,6 @@ export async function GET() {
 
     const htmlContent = await response.text();
 
-    // Verificación de contenido mínima para evitar errores de parseo
     if (!htmlContent || htmlContent.length < 100) {
       throw new Error('Respuesta de SSAN vacía o demasiado corta');
     }
@@ -88,9 +87,17 @@ export async function GET() {
       }
     });
 
-    // Simplificamos el formato de fecha para evitar errores de ICU/Locale en el Edge de Cloudflare
-    const now = new Date();
-    const timestamp = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+    // Usamos Intl.DateTimeFormat para forzar la zona horaria de Chile
+    const formatter = new Intl.DateTimeFormat('es-CL', {
+      timeZone: 'America/Santiago',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    const timestamp = formatter.format(new Date()).replace(',', '');
 
     return NextResponse.json({
       hospital: "Hospital de Collipulli",
@@ -110,7 +117,6 @@ export async function GET() {
 
   } catch (error: any) {
     console.error("API Route Error:", error.message);
-    // Devolvemos el error en el JSON para que el frontend pueda mostrarlo
     return NextResponse.json({
       error: 'Error interno en el servidor',
       message: error.message
