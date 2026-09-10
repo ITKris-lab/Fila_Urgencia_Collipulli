@@ -134,14 +134,14 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 gap-3 mb-6">
         <CategoryCard
           label="C1"
-          desc="Riesgo Vital"
+          desc="Riesgo Vital - Atención Inmediata"
           value={data?.categorias?.C1?.cantidad || 0}
           time={data?.categorias?.C1?.tiempoPromedio || "0 min"}
           color="bg-red-600"
         />
         <CategoryCard
           label="C2"
-          desc="Emergencia"
+          desc="Emergencia Evidente"
           value={data?.categorias?.C2?.cantidad || 0}
           time={data?.categorias?.C2?.tiempoPromedio || "30 min"}
           color="bg-orange-600"
@@ -260,6 +260,8 @@ function CategoryCard({ label, desc, value, time, color }: { label: string, desc
         <span className="text-white font-black text-lg opacity-80">{label}</span>
         <span className="text-white font-black text-2xl tracking-tighter">{value}</span>
       </div>
+
+      <p className="text-white/90 text-[10px] font-bold leading-tight uppercase relative z-10">{desc}</p>
 
       <div className="flex items-center gap-1.5 bg-black/10 backdrop-blur-sm rounded-full py-0.5 px-2 w-fit border border-white/10 relative z-10">
         <Clock className="w-2.5 h-2.5 text-white/70" />
