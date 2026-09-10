@@ -246,7 +246,7 @@ export default function Dashboard() {
           <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
           <span>Actualizado: {data?.ultimaActualizacion || '---'}</span>
         </div>
-        <p className="text-slate-300 text-[9px] uppercase tracking-widest">Hospital Collipulli • Unidad de TIC </p><br>
+        <p className="text-slate-300 text-[9px] uppercase tracking-widest">Hospital Collipulli • Unidad de TIC </p>
         <p className="text-slate-300 text-[9px] uppercase tracking-widest">Participación</p>
       </footer>
     </main>
