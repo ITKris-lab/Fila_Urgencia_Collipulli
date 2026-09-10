@@ -60,11 +60,11 @@ export default function Dashboard() {
   }
 
   const categoryDescriptions = [
-    { id: 'C1', title: 'Riesgo Vital ¡INMINENTE!', color: 'bg-red-600', desc: 'Pasará inmediatamente a box de reanimación.' },
-    { id: 'C2', title: 'Grave', color: 'bg-orange-600', desc: 'Se requiere evaluación médica urgente. De ser necesario pasará a un box de atención.' },
-    { id: 'C3', title: 'Medio', color: 'bg-amber-500', desc: 'Esperará llamado a categorización y regresará a sala de espera general.' },
-    { id: 'C4', title: 'No Urgente', color: 'bg-blue-600', desc: 'Permanecerá en sala de espera general. Puede consultar en su CESFAM o SAPU.' },
-    { id: 'C5', title: 'General', color: 'bg-emerald-600', desc: 'Puede consultar en su CESFAM, SAPU o llamar a Salud Responde.' }
+    { id: 'C1', title: 'Riesgo Vital - Atención Inmediata', color: 'bg-red-600', desc: 'Pasará inmediatamente a box de reanimación.' },
+    { id: 'C2', title: 'Emergencia Evidente - Atención antes de 30 min', color: 'bg-orange-600', desc: 'Se requiere evaluación médica urgente. De ser necesario pasará a un box de atención.' },
+    { id: 'C3', title: 'Urgencia Inmediata', color: 'bg-amber-500', desc: 'Esperará llamado a categorización y regresará a sala de espera general.' },
+    { id: 'C4', title: 'Urgencia Mediana', color: 'bg-blue-600', desc: 'Permanecerá en sala de espera general. Puede consultar en su CESFAM o SAPU.' },
+    { id: 'C5', title: 'Atención General', color: 'bg-emerald-600', desc: 'Puede consultar en su CESFAM, SAPU o llamar a Salud Responde.' }
   ];
 
   return (
@@ -155,35 +155,35 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 gap-4">
         <CategoryCard
           label="C1"
-          desc="Crítico"
+          desc="Riesgo Vital - Atención Inmediata"
           value={data?.categorias?.C1?.cantidad || 0}
           time={data?.categorias?.C1?.tiempoPromedio || "0 min"}
           color="bg-red-600"
         />
         <CategoryCard
           label="C2"
-          desc="Grave"
+          desc="Emergencia Evidente - Atención antes de 30 min"
           value={data?.categorias?.C2?.cantidad || 0}
-          time={data?.categorias?.C2?.tiempoPromedio || "0 min"}
+          time={data?.categorias?.C2?.tiempoPromedio || "30 min"}
           color="bg-orange-600"
         />
         <CategoryCard
           label="C3"
-          desc="Medio"
+          desc="Urgencia Inmediata"
           value={data?.categorias?.C3?.cantidad || 0}
           time={data?.categorias?.C3?.tiempoPromedio || "0 min"}
           color="bg-amber-500"
         />
         <CategoryCard
           label="C4"
-          desc="No Urgente"
+          desc="Urgencia Mediana"
           value={data?.categorias?.C4?.cantidad || 0}
           time={data?.categorias?.C4?.tiempoPromedio || "0 min"}
           color="bg-blue-600"
         />
         <CategoryCard
           label="C5"
-          desc="General"
+          desc="Atención General"
           value={data?.categorias?.C5?.cantidad || 0}
           time={data?.categorias?.C5?.tiempoPromedio || "0 min"}
           color="bg-emerald-600"
@@ -246,7 +246,8 @@ export default function Dashboard() {
           <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
           <span>Actualizado: {data?.ultimaActualizacion || '---'}</span>
         </div>
-        <p className="text-slate-300 text-[9px] uppercase tracking-widest">Hospital Collipulli • Unidad de TIC</p>
+        <p className="text-slate-300 text-[9px] uppercase tracking-widest">Hospital Collipulli • Unidad de TIC </p><br>
+        <p className="text-slate-300 text-[9px] uppercase tracking-widest">Participación</p>
       </footer>
     </main>
   );
