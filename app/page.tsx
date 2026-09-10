@@ -116,53 +116,32 @@ export default function Dashboard() {
       </div>
 
       {/* Metrics Grid */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 text-center">
-          <Clock className="w-6 h-6 text-amber-500 mx-auto mb-2" />
-          <span className="block text-3xl font-black text-slate-800 leading-none mb-1">{data?.enEspera || 0}</span>
-          <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">En Espera</span>
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 text-center">
+          <Clock className="w-5 h-5 text-amber-500 mx-auto mb-1" />
+          <span className="block text-2xl font-black text-slate-800 leading-none mb-1">{data?.enEspera || 0}</span>
+          <span className="text-slate-400 text-[9px] font-bold uppercase tracking-widest">En Espera</span>
         </div>
-        <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 text-center">
-          <Users className="w-6 h-6 text-emerald-500 mx-auto mb-2" />
-          <span className="block text-3xl font-black text-slate-800 leading-none mb-1">{data?.enAtencion || 0}</span>
-          <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">En Atención</span>
+        <div className="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 text-center">
+          <Users className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
+          <span className="block text-2xl font-black text-slate-800 leading-none mb-1">{data?.enAtencion || 0}</span>
+          <span className="text-slate-400 text-[9px] font-bold uppercase tracking-widest">En Atención</span>
         </div>
       </div>
 
-      {/* Telesalud Section */}
-      <a
-        href="https://telesalud.gob.cl"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block bg-blue-600 hover:bg-blue-700 transition-colors rounded-3xl p-5 mb-8 shadow-lg shadow-blue-100 border border-blue-500"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="bg-white/20 p-2.5 rounded-2xl">
-              <Plus className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <p className="text-white font-black text-lg leading-none">Telesalud</p>
-              <p className="text-blue-100 text-[10px] mt-1 font-bold uppercase">Atención Virtual</p>
-            </div>
-          </div>
-          <ExternalLink className="w-5 h-5 text-white/50" />
-        </div>
-      </a>
-
       {/* Categories Grid */}
-      <h3 className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4 pl-1">Clasificación de Riesgo</h3>
-      <div className="grid grid-cols-2 gap-4">
+      <h3 className="text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] mb-3 pl-1">Pacientes por Categoría (tiempo promedio)</h3>
+      <div className="grid grid-cols-2 gap-3 mb-6">
         <CategoryCard
           label="C1"
-          desc="Riesgo Vital - Atención Inmediata"
+          desc="Riesgo Vital"
           value={data?.categorias?.C1?.cantidad || 0}
           time={data?.categorias?.C1?.tiempoPromedio || "0 min"}
           color="bg-red-600"
         />
         <CategoryCard
           label="C2"
-          desc="Emergencia Evidente - Atención antes de 30 min"
+          desc="Emergencia"
           value={data?.categorias?.C2?.cantidad || 0}
           time={data?.categorias?.C2?.tiempoPromedio || "30 min"}
           color="bg-orange-600"
@@ -192,10 +171,31 @@ export default function Dashboard() {
           label="AD"
           desc="Admisión"
           value={data?.categorias?.AD?.cantidad || 0}
-          time="---"
+          time={data?.categorias?.AD?.tiempoPromedio || "0 min"}
           color="bg-purple-600"
         />
       </div>
+
+      {/* Telesalud Section (Moved to end) */}
+      <a
+        href="https://telesalud.gob.cl"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block bg-blue-600 hover:bg-blue-700 transition-colors rounded-3xl p-4 mb-8 shadow-lg shadow-blue-100 border border-blue-500"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/20 p-2 rounded-xl">
+              <Plus className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-white font-black text-base leading-none">Telesalud</p>
+              <p className="text-blue-100 text-[9px] mt-1 font-bold uppercase">Solicitar atención virtual</p>
+            </div>
+          </div>
+          <ExternalLink className="w-4 h-4 text-white/50" />
+        </div>
+      </a>
 
       {/* Modal de Información */}
       {showInfo && (
@@ -255,25 +255,15 @@ export default function Dashboard() {
 
 function CategoryCard({ label, desc, value, time, color }: { label: string, desc: string, value: number, time: string, color: string }) {
   return (
-    <div className={`${color} rounded-[2rem] p-5 flex flex-col justify-between min-h-[140px] shadow-lg shadow-black/5 transition-all active:scale-95 border border-white/10 relative overflow-hidden group`}>
-      <Users className="absolute -right-4 -top-4 w-20 h-20 text-white/5 rotate-12" />
-
-      <div className="flex justify-between items-start relative z-10">
-        <div className="bg-white/20 backdrop-blur-md w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-lg border border-white/20 shadow-inner">
-          {label}
-        </div>
-        <div className="text-right">
-          <span className="block text-3xl font-black text-white leading-none">{value}</span>
-          <span className="text-white/60 text-[9px] font-bold uppercase tracking-tighter">Pacientes</span>
-        </div>
+    <div className={`${color} rounded-2xl p-3 flex flex-col gap-1 shadow-md transition-all active:scale-95 border border-white/10 relative overflow-hidden group`}>
+      <div className="flex justify-between items-center relative z-10">
+        <span className="text-white font-black text-lg opacity-80">{label}</span>
+        <span className="text-white font-black text-2xl tracking-tighter">{value}</span>
       </div>
 
-      <div className="relative z-10">
-        <h4 className="text-white font-black text-sm leading-tight mb-2 uppercase">{desc}</h4>
-        <div className="flex items-center gap-1.5 bg-black/10 backdrop-blur-sm rounded-full py-1 px-3 w-fit border border-white/10">
-          <Clock className="w-3 h-3 text-white/70" />
-          <span className="text-white text-[10px] font-black">{time}</span>
-        </div>
+      <div className="flex items-center gap-1.5 bg-black/10 backdrop-blur-sm rounded-full py-0.5 px-2 w-fit border border-white/10 relative z-10">
+        <Clock className="w-2.5 h-2.5 text-white/70" />
+        <span className="text-white text-[9px] font-bold">{time}</span>
       </div>
     </div>
   );
