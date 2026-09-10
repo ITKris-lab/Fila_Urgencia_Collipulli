@@ -4,6 +4,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Fila Urgencia Collipulli",
   description: "Estado de la fila en Unidad de Emergencia Hospital de Collipulli",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({
