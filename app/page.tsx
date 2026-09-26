@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, Users, Clock, Plus, Info, X, ExternalLink } from 'lucide-react';
+import { RefreshCw, Users, Clock, Plus, Info, X, ExternalLink, Calendar } from 'lucide-react';
 
 interface CategoriaData {
   cantidad: number;
@@ -24,7 +24,7 @@ export default function Dashboard() {
   const [showInfo, setShowInfo] = useState(false);
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
+    if (!data) setLoading(true);
     try {
       const response = await fetch('/api/urgencia-collipulli');
       if (!response.ok) throw new Error('Error al cargar datos');
@@ -35,14 +35,24 @@ export default function Dashboard() {
       }
 
       setData(result);
+      localStorage.setItem('urgencia_data', JSON.stringify(result));
     } catch (err) {
       console.error("Fetch error:", err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [data]);
 
   useEffect(() => {
+    const cached = localStorage.getItem('urgencia_data');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        setData(parsed);
+        setLoading(false);
+      } catch (e) {}
+    }
+
     fetchData();
     const interval = setInterval(fetchData, 60000); // Poll every 60s
     return () => clearInterval(interval);
@@ -175,6 +185,27 @@ export default function Dashboard() {
           color="bg-purple-600"
         />
       </div>
+
+      {/* Consulta de Citas Section */}
+      <a
+        href="https://www.esissan.cl/WsConsultaAg"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block bg-emerald-600 hover:bg-emerald-700 transition-colors rounded-3xl p-4 mb-4 shadow-lg shadow-emerald-100 border border-emerald-500"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/20 p-2 rounded-xl">
+              <Calendar className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-white font-black text-base leading-none">Consultar Cita</p>
+              <p className="text-emerald-100 text-[9px] mt-1 font-bold uppercase">Ver estado de horas médicas</p>
+            </div>
+          </div>
+          <ExternalLink className="w-4 h-4 text-white/50" />
+        </div>
+      </a>
 
       {/* Telesalud Section (Moved to end) */}
       <a
