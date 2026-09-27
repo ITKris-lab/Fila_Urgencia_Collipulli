@@ -44,7 +44,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 50000); // Poll every 50s
+    const interval = setInterval(fetchData, 45000); // Poll every 45s
     return () => clearInterval(interval);
   }, [fetchData]);
 
