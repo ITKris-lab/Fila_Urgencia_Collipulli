@@ -19,12 +19,23 @@ interface UrgenciaData {
 }
 
 export default function Dashboard() {
-  const [data, setData] = useState<UrgenciaData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<UrgenciaData | null>(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const cached = localStorage.getItem('urgencia_data');
+      return cached ? JSON.parse(cached) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return !localStorage.getItem('urgencia_data');
+  });
   const [showInfo, setShowInfo] = useState(false);
 
   const fetchData = useCallback(async () => {
-    if (!data) setLoading(true);
     try {
       const response = await fetch('/api/urgencia-collipulli');
       if (!response.ok) throw new Error('Error al cargar datos');
@@ -41,20 +52,11 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  }, [data]);
+  }, []);
 
   useEffect(() => {
-    const cached = localStorage.getItem('urgencia_data');
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached);
-        setData(parsed);
-        setLoading(false);
-      } catch (e) {}
-    }
-
     fetchData();
-    const interval = setInterval(fetchData, 60000); // Poll every 60s
+    const interval = setInterval(fetchData, 30000); // Poll every 30s
     return () => clearInterval(interval);
   }, [fetchData]);
 
@@ -153,7 +155,7 @@ export default function Dashboard() {
           label="C2"
           desc="Emergencia Evidente"
           value={data?.categorias?.C2?.cantidad || 0}
-          time={data?.categorias?.C2?.tiempoPromedio || "30 min"}
+          time={data?.categorias?.C2?.tiempoPromedio || "0 min"}
           color="bg-orange-600"
         />
         <CategoryCard
