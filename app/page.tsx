@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [showInfo, setShowInfo] = useState(false);
 
   const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await fetch('/api/urgencia-collipulli');
       if (!response.ok) throw new Error('Error al cargar datos');
@@ -34,7 +35,6 @@ export default function Dashboard() {
       }
 
       setData(result);
-      localStorage.setItem('urgencia_data', JSON.stringify(result));
     } catch (err) {
       console.error("Fetch error:", err instanceof Error ? err.message : String(err));
     } finally {
@@ -43,17 +43,8 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    const cached = localStorage.getItem('urgencia_data');
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached);
-        setData(parsed);
-        setLoading(false);
-      } catch (e) {}
-    }
-
     fetchData();
-    const interval = setInterval(fetchData, 30000); // Poll every 30s
+    const interval = setInterval(fetchData, 60000); // Poll every 60s
     return () => clearInterval(interval);
   }, [fetchData]);
 
@@ -152,7 +143,7 @@ export default function Dashboard() {
           label="C2"
           desc="Emergencia Evidente"
           value={data?.categorias?.C2?.cantidad || 0}
-          time={data?.categorias?.C2?.tiempoPromedio || "0 min"}
+          time={data?.categorias?.C2?.tiempoPromedio || "30 min"}
           color="bg-orange-600"
         />
         <CategoryCard

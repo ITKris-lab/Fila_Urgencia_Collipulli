@@ -4,16 +4,7 @@ import * as cheerio from 'cheerio';
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
-let cachedData: any = null;
-let lastFetchTime = 0;
-const CACHE_TTL = 30 * 1000; // 30 seconds
-
 export async function GET() {
-  const now = Date.now();
-  if (cachedData && (now - lastFetchTime < CACHE_TTL)) {
-    return NextResponse.json(cachedData);
-  }
-
   const url = 'https://www.esissan.cl/ssan_pth_mapa_redurgencia/sele_ciu_grafico';
 
   try {
@@ -108,7 +99,7 @@ export async function GET() {
     });
     const timestamp = formatter.format(new Date()).replace(',', '');
 
-    const result = {
+    return NextResponse.json({
       hospital: "Hospital de Collipulli",
       totalPacientes,
       enEspera,
@@ -122,18 +113,10 @@ export async function GET() {
         AD: { cantidad: quantities["ADMISION"], tiempoPromedio: times["ADMISION"] }
       },
       ultimaActualizacion: timestamp
-    };
-
-    cachedData = result;
-    lastFetchTime = now;
-
-    return NextResponse.json(result);
+    });
 
   } catch (error: any) {
     console.error("API Route Error:", error.message);
-    if (cachedData) {
-      return NextResponse.json(cachedData);
-    }
     return NextResponse.json({
       error: 'Error interno en el servidor',
       message: error.message
