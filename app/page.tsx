@@ -19,20 +19,8 @@ interface UrgenciaData {
 }
 
 export default function Dashboard() {
-  const [data, setData] = useState<UrgenciaData | null>(() => {
-    if (typeof window === 'undefined') return null;
-    try {
-      const cached = localStorage.getItem('urgencia_data');
-      return cached ? JSON.parse(cached) : null;
-    } catch (e) {
-      return null;
-    }
-  });
-
-  const [loading, setLoading] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return true;
-    return !localStorage.getItem('urgencia_data');
-  });
+  const [data, setData] = useState<UrgenciaData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [showInfo, setShowInfo] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -55,6 +43,15 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
+    const cached = localStorage.getItem('urgencia_data');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        setData(parsed);
+        setLoading(false);
+      } catch (e) {}
+    }
+
     fetchData();
     const interval = setInterval(fetchData, 30000); // Poll every 30s
     return () => clearInterval(interval);
