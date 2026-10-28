@@ -103,12 +103,12 @@ export default function Dashboard() {
 
           <div className="flex justify-between items-end">
             <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/30">
-              <span className="block text-white text-[10px] font-bold uppercase tracking-wider mb-0.5">Pacientes Totales</span>
+              <span className="block text-black text-[10px] font-bold uppercase tracking-wider mb-0.5">Pacientes Totales</span>
               <span className="text-white text-3xl font-black">{data?.totalPacientes || 0}</span>
             </div>
             <div className="bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 flex items-center gap-2">
               <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-white text-[10px] font-bold uppercase tracking-tighter">Abierto 24h</span>
+              <span className="text-red text-[10px] font-bold uppercase tracking-tighter">Abierto 24h</span>
             </div>
           </div>
         </div>
@@ -130,7 +130,7 @@ export default function Dashboard() {
       </div>
 
       {/* Categories Grid */}
-      <h3 className="text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] mb-3 pl-1">Pacientes por Categoría (tiempo promedio)</h3>
+      <h3 className="text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] mb-3 pl-1">Pacientes por Categoría (tiempo promedio), Recuerde que su atención se basa en la clasificación de su riesgo y no en el orden de llegada.</h3>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
         <CategoryCard
           label="C1"
