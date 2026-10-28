@@ -68,7 +68,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 p-4 max-w-md mx-auto font-sans pb-12">
+    <main className="min-h-screen bg-slate-50 text-slate-900 p-4 sm:p-6 md:p-8 max-w-md sm:max-w-xl md:max-w-3xl lg:max-w-5xl mx-auto font-sans pb-12">
       {/* Header */}
       <header className="flex items-center justify-between mb-6 pt-2">
         <div className="flex items-center gap-3">
@@ -131,7 +131,7 @@ export default function Dashboard() {
 
       {/* Categories Grid */}
       <h3 className="text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] mb-3 pl-1">Pacientes por Categoría (tiempo promedio)</h3>
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
         <CategoryCard
           label="C1"
           desc="Riesgo Vital - Atención Inmediata"
