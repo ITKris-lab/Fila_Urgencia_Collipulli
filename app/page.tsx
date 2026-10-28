@@ -52,8 +52,8 @@ export default function Dashboard() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <div className="flex flex-col items-center gap-4">
-          <RefreshCw className="w-10 h-10 text-red-600 animate-spin" />
-          <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Cargando datos...</p>
+          <RefreshCw className="w-10 h-10 text-sky-500 animate-spin" />
+          <p className="text-slate-400 font-bold text-xs uppercase tracking-widest animate-pulse">Cargando datos...</p>
         </div>
       </div>
     );
@@ -68,61 +68,66 @@ export default function Dashboard() {
   ];
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 p-4 sm:p-6 md:p-8 max-w-md sm:max-w-xl md:max-w-3xl lg:max-w-5xl mx-auto font-sans pb-12">
+    <main className="min-h-screen bg-slate-50 text-slate-900 p-4 sm:p-6 md:p-8 max-w-md sm:max-w-xl md:max-w-3xl lg:max-w-5xl mx-auto font-sans pb-12 transition-all duration-300">
       {/* Header */}
       <header className="flex items-center justify-between mb-6 pt-2">
         <div className="flex items-center gap-3">
-          <div className="bg-red-600 p-2 rounded-xl shadow-lg shadow-red-100">
-            <RefreshCw className={`w-5 h-5 text-white ${loading ? 'animate-spin' : ''}`} onClick={() => fetchData()} />
+          <div
+            onClick={() => fetchData()}
+            className="bg-sky-500 p-2.5 rounded-xl shadow-lg shadow-sky-100 cursor-pointer active:scale-95 transition-transform duration-200 hover:bg-sky-600"
+          >
+            <RefreshCw className={`w-5 h-5 text-white ${loading ? 'animate-spin' : ''}`} />
           </div>
           <div>
-            <h1 className="font-black text-xl tracking-tight text-slate-800">Urgencia<span className="text-red-600">Collipulli</span></h1>
+            <h1 className="font-black text-xl tracking-tight text-slate-800">
+              Urgencia<span className="text-sky-600">Collipulli</span>
+            </h1>
             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">En tiempo real</p>
           </div>
         </div>
         <button
           onClick={() => setShowInfo(true)}
-          className="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 text-slate-500 hover:text-blue-600 transition-colors"
+          className="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 text-slate-500 hover:text-sky-600 hover:border-sky-200 transition-all duration-200 active:scale-95"
         >
           <Info className="w-6 h-6" />
         </button>
       </header>
 
       {/* Hospital Banner */}
-      <div className="bg-cyan-500 rounded-3xl p-6 mb-6 relative overflow-hidden shadow-xl shadow-red-100">
+      <div className="bg-cyan-500 rounded-3xl p-6 mb-6 relative overflow-hidden shadow-xl shadow-cyan-100 transition-transform duration-300 hover:scale-[1.01]">
         <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-4 mb-6">
              <div className="bg-white p-3 rounded-2xl shadow-inner">
                 <Users className="w-8 h-8 text-cyan-600" />
              </div>
              <div>
                 <h2 className="text-white font-black text-2xl leading-none">Hospital de Collipulli</h2>
-                <p className="text-cyan-100 text-xs font-bold mt-1 uppercase tracking-tighter opacity-80">Unidad de Emergencia</p>
+                <p className="text-cyan-100 text-xs font-bold mt-1 uppercase tracking-tighter opacity-90">Unidad de Emergencia</p>
              </div>
           </div>
 
           <div className="flex justify-between items-end">
-            <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/30">
-              <span className="block text-black text-[10px] font-bold uppercase tracking-wider mb-0.5">Pacientes Totales</span>
+            <div className="bg-white/15 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20 shadow-inner transition-all duration-300">
+              <span className="block text-cyan-100 text-[10px] font-bold uppercase tracking-wider mb-0.5">Pacientes Totales</span>
               <span className="text-white text-3xl font-black">{data?.totalPacientes || 0}</span>
             </div>
-            <div className="bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 flex items-center gap-2">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-red text-[10px] font-bold uppercase tracking-tighter">Abierto 24h</span>
+            <div className="bg-black/20 px-3 py-1.5 rounded-xl border border-white/20 flex items-center gap-2 backdrop-blur-sm">
+              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              <span className="text-white text-[10px] font-bold uppercase tracking-tighter">Abierto 24h</span>
             </div>
           </div>
         </div>
-        <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl pointer-events-none" />
       </div>
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-2 gap-3 mb-6">
-        <div className="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 text-center">
+        <div className="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 text-center transition-all duration-200 hover:shadow-md hover:border-slate-200">
           <Clock className="w-5 h-5 text-amber-500 mx-auto mb-1" />
           <span className="block text-2xl font-black text-slate-800 leading-none mb-1">{data?.enEspera || 0}</span>
           <span className="text-slate-400 text-[9px] font-bold uppercase tracking-widest">En Espera</span>
         </div>
-        <div className="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 text-center">
+        <div className="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 text-center transition-all duration-200 hover:shadow-md hover:border-slate-200">
           <Users className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
           <span className="block text-2xl font-black text-slate-800 leading-none mb-1">{data?.enAtencion || 0}</span>
           <span className="text-slate-400 text-[9px] font-bold uppercase tracking-widest">En Atención</span>
@@ -130,7 +135,9 @@ export default function Dashboard() {
       </div>
 
       {/* Categories Grid */}
-      <h3 className="text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] mb-3 pl-1">Pacientes por Categoría (tiempo promedio), Recuerde que su atención se basa en la clasificación de su riesgo y no en el orden de llegada.</h3>
+      <h3 className="text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] mb-3 pl-1">
+        Pacientes por Categoría (tiempo promedio), Recuerde que su atención se basa en la clasificación de su riesgo y no en el orden de llegada.
+      </h3>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
         <CategoryCard
           label="C1"
@@ -181,7 +188,7 @@ export default function Dashboard() {
         href="https://www.esissan.cl/WsConsultaAg"
         target="_blank"
         rel="noopener noreferrer"
-        className="block bg-emerald-600 hover:bg-emerald-700 transition-colors rounded-3xl p-4 mb-4 shadow-lg shadow-emerald-100 border border-emerald-500"
+        className="block bg-emerald-600 hover:bg-emerald-700 transition-all duration-200 rounded-3xl p-4 mb-4 shadow-lg shadow-emerald-100 border border-emerald-500 hover:scale-[1.01] active:scale-95"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -197,12 +204,12 @@ export default function Dashboard() {
         </div>
       </a>
 
-      {/* Telesalud Section (Moved to end) */}
+      {/* Telesalud Section */}
       <a
         href="https://telesalud.gob.cl"
         target="_blank"
         rel="noopener noreferrer"
-        className="block bg-blue-600 hover:bg-blue-700 transition-colors rounded-3xl p-4 mb-8 shadow-lg shadow-blue-100 border border-blue-500"
+        className="block bg-sky-600 hover:bg-sky-700 transition-all duration-200 rounded-3xl p-4 mb-8 shadow-lg shadow-sky-100 border border-sky-500 hover:scale-[1.01] active:scale-95"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -211,7 +218,7 @@ export default function Dashboard() {
             </div>
             <div>
               <p className="text-white font-black text-base leading-none">Telesalud</p>
-              <p className="text-blue-100 text-[9px] mt-1 font-bold uppercase">Solicitar atención virtual</p>
+              <p className="text-sky-100 text-[9px] mt-1 font-bold uppercase">Solicitar atención virtual</p>
             </div>
           </div>
           <ExternalLink className="w-4 h-4 text-white/50" />
@@ -220,19 +227,19 @@ export default function Dashboard() {
 
       {/* Modal de Información */}
       {showInfo && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
-          <div className="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
+          <div className="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden transform transition-all duration-300 animate-in fade-in zoom-in-95">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-black text-slate-800">¿Qué significa cada color?</h3>
-                <button onClick={() => setShowInfo(false)} className="p-2 bg-slate-100 rounded-full text-slate-400 hover:text-slate-600">
+                <button onClick={() => setShowInfo(false)} className="p-2 bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors">
                   <X className="w-6 h-6" />
                 </button>
               </div>
 
               <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                <div className="bg-red-50 border border-red-100 p-4 rounded-2xl mb-6">
-                  <p className="text-red-700 text-xs font-bold leading-tight uppercase tracking-tighter">
+                <div className="bg-sky-50 border border-sky-100 p-4 rounded-2xl mb-6">
+                  <p className="text-sky-800 text-xs font-bold leading-tight uppercase tracking-tighter">
                     Recuerde que su atención se basa en la clasificación de su riesgo y no en el orden de llegada.
                   </p>
                 </div>
@@ -276,7 +283,7 @@ export default function Dashboard() {
 
 function CategoryCard({ label, desc, value, time, color }: { label: string, desc: string, value: number, time: string, color: string }) {
   return (
-    <div className={`${color} rounded-2xl p-3 flex flex-col gap-1 shadow-md transition-all active:scale-95 border border-white/10 relative overflow-hidden group`}>
+    <div className={`${color} rounded-2xl p-3 flex flex-col gap-1 shadow-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-95 border border-white/10 relative overflow-hidden group cursor-pointer`}>
       <div className="flex justify-between items-center relative z-10">
         <span className="text-white font-black text-lg opacity-80">{label}</span>
         <span className="text-white font-black text-2xl tracking-tighter">{value}</span>
