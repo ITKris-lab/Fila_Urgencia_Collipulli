@@ -89,15 +89,15 @@ export default function Dashboard() {
       </header>
 
       {/* Hospital Banner */}
-      <div className="bg-red-600 rounded-3xl p-6 mb-6 relative overflow-hidden shadow-xl shadow-red-100">
+      <div className="bg-cyan-500 rounded-3xl p-6 mb-6 relative overflow-hidden shadow-xl shadow-red-100">
         <div className="relative z-10">
           <div className="flex items-center gap-4 mb-4">
              <div className="bg-white p-3 rounded-2xl shadow-inner">
-                <Users className="w-8 h-8 text-red-600" />
+                <Users className="w-8 h-8 text-cyan-600" />
              </div>
              <div>
                 <h2 className="text-white font-black text-2xl leading-none">Hospital de Collipulli</h2>
-                <p className="text-red-100 text-xs font-bold mt-1 uppercase tracking-tighter opacity-80">Unidad de Emergencia</p>
+                <p className="text-cyan-100 text-xs font-bold mt-1 uppercase tracking-tighter opacity-80">Unidad de Emergencia</p>
              </div>
           </div>
 
